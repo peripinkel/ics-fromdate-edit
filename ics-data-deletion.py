@@ -5,6 +5,7 @@ from datetime import datetime
 from datetime import date
 from pathlib import Path
 
+# Set the path
 calendar_path = Path("src/icalendar/school-schedule.ics")
 
 # Load the ics file into the script
