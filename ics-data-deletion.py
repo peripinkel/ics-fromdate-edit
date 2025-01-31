@@ -70,6 +70,8 @@ for event in loaded_calendar.walk('VEVENT'):
                         new_event.add(item, current_event[30:])
                 elif current_event[6:].startswith("EN"):
                     new_event.add(item, current_event[14:])
+                else:
+                    new_event.add(item, current_event)
             else:
                 new_event.add(item, current_event)
         
