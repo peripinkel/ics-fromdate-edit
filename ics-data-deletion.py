@@ -36,10 +36,11 @@ def dtstart_date_check(dtstart):
 # Inititiates calendar with properties of the original
 def initiate_calendar(original_calendar: Calendar):
     calendar = Calendar()
-    calendar.add('method', original_calendar.get('METHOD'))
-    calendar.add('prodid', original_calendar.get('PRODID'))
-    calendar.add('version', original_calendar.get('VERSION'))
-    calendar.add('x-wr-calname', original_calendar.get('X-WR-CALNAME'))
+    
+    # Uses array to copy properties from the original
+    calender_properties = ["method", "prodid", "version", "x-wr-calname"]
+    for item in calender_properties:
+        calendar.add(item, original_calendar.get(item))
 
     return calendar
 
@@ -54,16 +55,24 @@ for event in loaded_calendar.walk('VEVENT'):
     if dtstart_date >= today:
         # Create events needed for the new calendar file
         new_event = Event()
-        new_event.add('uid', event.get('UID'))
-        new_event.add('summary', event.get('SUMMARY'))
-        new_event.add('dtstart', event.get('DTSTART'))
-        new_event.add('dtend', event.get('DTEND'))
-        new_event.add('class', event.get('CLASS'))
-        new_event.add('priority', event.get('PRIORITY'))
-        new_event.add('dtstamp', event.get('DTSTAMP'))
-        new_event.add('transp', event.get('TRANSP'))
-        new_event.add('status', event.get('STATUS'))
-        new_event.add('sequence', event.get('SEQUENCE'))
+
+        # Goes through array to copy event types
+        # Note to self: ! Change this to read from the file in the future !
+        event_properties = ["uid", "summary", "dtstart", "dtend", "class", "priority", "dtstamp", "transp", "status", "sequence", "location"]
+        for item in event_properties:
+            # This includes rough editing codes because my study has a lot of study additions, I will change the method in the future (hopefully)
+            current_event = event.get(item)
+            if item == "summary":
+                if current_event[6:].startswith("SW1"):
+                    if current_event[20:].startswith("SW1B"):
+                        new_event.add(item, current_event[27:])
+                    else:
+                        new_event.add(item, current_event[30:])
+                elif current_event[6:].startswith("EN"):
+                    new_event.add(item, current_event[14:])
+            else:
+                new_event.add(item, current_event)
+        
         new_calendar.add_component(new_event)
 
 
